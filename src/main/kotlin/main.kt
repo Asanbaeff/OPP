@@ -62,5 +62,6 @@ object WallService {
 
     fun clear() {
         posts.clear()
+        lastId = 0
     }
 }
