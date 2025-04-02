@@ -18,22 +18,20 @@ class WallServiceTest {
     }
 
     @Test
-    fun updateExistingTrue() {
+    fun testUpdateExistingPost() {
         val originalPost = Post(id = 1, text = "Original Title")
-        WallService.update(originalPost)
-        val updatedPost = Post(id = 1, text = "Updated Title")
+        WallService.add(originalPost)
+        val updatedPost = originalPost.copy(text = "Updated Title")
         val result = WallService.update(updatedPost)
-        assertEquals(false, result)
-
+        assertEquals(true, result)
+        val actualPost = WallService.getAllPosts().firstOrNull { it.id == 1 }
+        assertEquals("Updated Title", actualPost?.text)
     }
 
     @Test
-    fun updateExistingFalse() {
-        val originalPost = Post(id = 1, text = "Original Title")
-        WallService.update(originalPost)
+    fun testUpdateNonExistingPost() {
         val nonExistingPost = Post(id = 9999, text = "Non-existent Post")
         val result = WallService.update(nonExistingPost)
         assertEquals(false, result)
-
     }
 }

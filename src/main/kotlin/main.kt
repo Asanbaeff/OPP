@@ -38,11 +38,13 @@ data class Likes(
 )
 
 object WallService {
-    private var posts = emptyArray<Post>() // Массив для хранения постов
+    private var posts = mutableListOf<Post>() // Массив для хранения постов
+    private var lastId = 0
 
     fun add(post: Post): Post {
-        posts += post
-        return posts.last()
+        val newPost = post.copy(id = ++lastId)
+        posts.add(newPost)
+        return newPost
     }
 
     fun update(post: Post): Boolean {
@@ -54,13 +56,11 @@ object WallService {
         return false
     }
 
-
     fun getAllPosts(): List<Post> {
         return posts.toList()
     }
 
     fun clear() {
-        posts = emptyArray()
+        posts.clear()
     }
-
 }
