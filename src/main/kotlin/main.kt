@@ -1,20 +1,23 @@
 fun main() {
 
-    val post = Post(text = " Старый пост ")
-    val updatedPost = post.copy(text = " Новый пост ")
+    val post = Post(text = "Старый пост")
+    val updatedPost = post.copy(text = "Новый пост")
 
     val result1 = WallService.add(post)
     val result2 = WallService.update(updatedPost)
-
     println(WallService.getAllPosts())
 
     val postRep = PostRep(id = 1, content = "Репост абстрактный класс")
+    val audioAttachment =
+        AudioAttachment(audioUrl = "http://audio.mp3", duration = 120, title = "аудио")
+    val videoAttachment =
+        VideoAttachment(videoUrl = "http://video.mp4", duration = 300, title = "видео")
+    val photoAttachment = PhotoAttachment(photoUrl = "http://photo.jpg", width = 800, height = 600)
+    val docAttachment =
+        DocAttachment(documentUrl = "http://document.pdf", title = "документ", sizeInBytes = 2048)
+    val linkAttachment =
+        LinkAttachment(documentUrl = "http://link", title = "ссылка", url = "http://xx-yyy.com")
 
-    val audioAttachment = AudioAttachment()
-    val videoAttachment = VideoAttachment()
-    val photoAttachment = PhotoAttachment()
-    val docAttachment = DocAttachment()
-    val linkAttachment = LinkAttachment()
 
     postRep.addAttachment(audioAttachment)
     postRep.addAttachment(videoAttachment)
@@ -26,23 +29,6 @@ fun main() {
     for (attachment in postRep.attachments) {
         println("Attachment Type: ${attachment.type}")
     }
-
-    val postInf = PostInf(idInf = 101, contentInf = "Репост второй интерфейс")
-    val audioInf = AudioInf(duration = 180, bitrate = 320)
-    val audioAttachmentInf = AudioAttachmentInf(audioInf)
-    val videoInf = VideoInf(duration = 300, resolution = "1920x1080")
-    val videoAttachmentInf = VideoAttachmentInf(videoInf)
-    val photoInf = PhotoInf(width = 800, height = 600)
-    val photoAttachmentInf = PhotoAttachmentInf(photoInf)
-
-    postInf.addAttachmentInf(audioAttachmentInf)
-    postInf.addAttachmentInf(videoAttachmentInf)
-    postInf.addAttachmentInf(photoAttachmentInf)
-
-    println("PostInf ID: ${postInf.idInf}, ContentInf: ${postInf.contentInf}")
-    postInf.showAttachmentsInf()
-
-
 }
 
 data class Post(
@@ -101,13 +87,42 @@ object WallService {
     }
 }
 
-abstract class Attachment(val type: String) //абстрактный класс
+abstract class Attachment(open val type: String)
 
-class AudioAttachment : Attachment(type = "аудио")
-class VideoAttachment : Attachment(type = "видео")
-class PhotoAttachment : Attachment(type = "фото")
-class DocAttachment : Attachment(type = "документ")
-class LinkAttachment : Attachment(type = "ссылка")
+data class PhotoAttachment(
+    override val type: String = "фото",
+    val photoUrl: String,
+    val width: Int,
+    val height: Int
+) : Attachment(type)
+
+data class VideoAttachment(
+    override val type: String = "видео",
+    val videoUrl: String,
+    val duration: Int,
+    val title: String
+) : Attachment(type)
+
+data class AudioAttachment(
+    override val type: String = "аудио",
+    val audioUrl: String,
+    val duration: Int,
+    val title: String
+) : Attachment(type)
+
+data class DocAttachment(
+    override val type: String = "документ",
+    val documentUrl: String,
+    val title: String,
+    val sizeInBytes: Long
+) : Attachment(type)
+
+data class LinkAttachment(
+    override val type: String = "ссылка",
+    val documentUrl: String,
+    val title: String,
+    val url: String
+) : Attachment(type)
 
 class PostRep(val id: Int, val content: String) {
     val attachments = mutableListOf<Attachment>()
@@ -117,40 +132,12 @@ class PostRep(val id: Int, val content: String) {
     }
 }
 
-// Интерфейс AttachmentInf
-interface AttachmentInf {
-    val type: String
-}
 
-data class AudioInf(val duration: Int, val bitrate: Int)
-data class VideoInf(val duration: Int, val resolution: String)
-data class PhotoInf(val width: Int, val height: Int)
 
-class AudioAttachmentInf(val audioInf: AudioInf) : AttachmentInf {
-    override val type: String = "аудио"
-}
 
-class VideoAttachmentInf(val videoInf: VideoInf) : AttachmentInf {
-    override val type: String = "видео"
-}
 
-class PhotoAttachmentInf(val photoInf: PhotoInf) : AttachmentInf {
-    override val type: String = "фото"
-}
 
-class PostInf(val idInf: Int, val contentInf: String) {
-    private val attachmentsInf = mutableListOf<AttachmentInf>()
 
-    fun addAttachmentInf(attachmentInf: AttachmentInf) {
-        attachmentsInf.add(attachmentInf)
-    }
-
-    fun showAttachmentsInf() {
-        for (attachmentInf in attachmentsInf) {
-            println("AttachmentInf Type: ${attachmentInf.type}")
-        }
-    }
-}
 
 
 
