@@ -9,15 +9,13 @@ fun main() {
 
     val postRep = PostRep(id = 1, content = "Репост абстрактный класс")
     val audioAttachment =
-        AudioAttachment(audioUrl = "http://audio.mp3", duration = 120, title = "аудио")
+        AudioAttachment(audio = Audio(audioUrl = "http://audio.mp3", duration = 120, title = "Аудио"))
     val videoAttachment =
-        VideoAttachment(videoUrl = "http://video.mp4", duration = 300, title = "видео")
-    val photoAttachment = PhotoAttachment(photoUrl = "http://photo.jpg", width = 800, height = 600)
-    val docAttachment =
-        DocAttachment(documentUrl = "http://document.pdf", title = "документ", sizeInBytes = 2048)
+        VideoAttachment(video = Video(videoUrl = "http://video.mp4", duration = 300, title = "Видео"))
+    val photoAttachment = PhotoAttachment(photo = Photo(photoUrl = "http://photo.jpg", width = 800, height = 600))
+    val docAttachment = DocAttachment(doc = Doc(documentUrl = "http://doc.pdf", title = "Документ", sizeInBytes = 2048))
     val linkAttachment =
-        LinkAttachment(documentUrl = "http://link", title = "ссылка", url = "http://xx-yyy.com")
-
+        LinkAttachment(link = Link(documentUrl = "http://link", title = "Ссылка", url = "http://example.com"))
 
     postRep.addAttachment(audioAttachment)
     postRep.addAttachment(videoAttachment)
@@ -91,38 +89,58 @@ abstract class Attachment(open val type: String)
 
 data class PhotoAttachment(
     override val type: String = "фото",
+    val photo: Photo
+) : Attachment(type)
+
+data class Photo(
     val photoUrl: String,
     val width: Int,
     val height: Int
-) : Attachment(type)
+)
 
 data class VideoAttachment(
     override val type: String = "видео",
+    val video: Video,
+) : Attachment(type)
+
+data class Video(
     val videoUrl: String,
     val duration: Int,
     val title: String
-) : Attachment(type)
+)
 
 data class AudioAttachment(
     override val type: String = "аудио",
+    val audio: Audio,
+) : Attachment(type)
+
+data class Audio(
     val audioUrl: String,
     val duration: Int,
     val title: String
-) : Attachment(type)
+)
 
 data class DocAttachment(
     override val type: String = "документ",
+    val doc: Doc,
+) : Attachment(type)
+
+data class Doc(
     val documentUrl: String,
     val title: String,
     val sizeInBytes: Long
-) : Attachment(type)
+)
 
 data class LinkAttachment(
     override val type: String = "ссылка",
+    val link: Link,
+) : Attachment(type)
+
+data class Link(
     val documentUrl: String,
     val title: String,
     val url: String
-) : Attachment(type)
+)
 
 class PostRep(val id: Int, val content: String) {
     val attachments = mutableListOf<Attachment>()
