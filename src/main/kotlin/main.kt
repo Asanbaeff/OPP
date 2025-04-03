@@ -6,8 +6,42 @@ fun main() {
     val result1 = WallService.add(post)
     val result2 = WallService.update(updatedPost)
 
-    println("$result1 , $result2")
     println(WallService.getAllPosts())
+
+    val postRep = PostRep(id = 1, content = "Репост абстрактный класс")
+
+    val audioAttachment = AudioAttachment()
+    val videoAttachment = VideoAttachment()
+    val photoAttachment = PhotoAttachment()
+    val docAttachment = DocAttachment()
+    val linkAttachment = LinkAttachment()
+
+    postRep.addAttachment(audioAttachment)
+    postRep.addAttachment(videoAttachment)
+    postRep.addAttachment(photoAttachment)
+    postRep.addAttachment(docAttachment)
+    postRep.addAttachment(linkAttachment)
+
+    println("RePost ID: ${postRep.id}, Content: ${postRep.content}")
+    for (attachment in postRep.attachments) {
+        println("Attachment Type: ${attachment.type}")
+    }
+
+    val postInf = PostInf(idInf = 101, contentInf = "Репост второй интерфейс")
+    val audioInf = AudioInf(duration = 180, bitrate = 320)
+    val audioAttachmentInf = AudioAttachmentInf(audioInf)
+    val videoInf = VideoInf(duration = 300, resolution = "1920x1080")
+    val videoAttachmentInf = VideoAttachmentInf(videoInf)
+    val photoInf = PhotoInf(width = 800, height = 600)
+    val photoAttachmentInf = PhotoAttachmentInf(photoInf)
+
+    postInf.addAttachmentInf(audioAttachmentInf)
+    postInf.addAttachmentInf(videoAttachmentInf)
+    postInf.addAttachmentInf(photoAttachmentInf)
+
+    println("PostInf ID: ${postInf.idInf}, ContentInf: ${postInf.contentInf}")
+    postInf.showAttachmentsInf()
+
 
 }
 
@@ -22,7 +56,8 @@ data class Post(
     val replyPostId: Int? = null,   // Идентификатор родительского поста (если пост является комментарием)
     val friendsOnly: Boolean = false,  // Видимость поста только друзьям
     val comments: Comments? = null,   // Объект комментариев (вложенный класс)
-    val likes: Likes? = null          // Объект лайков (вложенный класс)
+    val likes: Likes? = null,         // Объект лайков (вложенный класс)
+    val attachments: List<Attachment> = emptyList() // Массив вложений
 )
 
 
@@ -65,3 +100,58 @@ object WallService {
         lastId = 0
     }
 }
+
+abstract class Attachment(val type: String) //абстрактный класс
+
+class AudioAttachment : Attachment(type = "аудио")
+class VideoAttachment : Attachment(type = "видео")
+class PhotoAttachment : Attachment(type = "фото")
+class DocAttachment : Attachment(type = "документ")
+class LinkAttachment : Attachment(type = "ссылка")
+
+class PostRep(val id: Int, val content: String) {
+    val attachments = mutableListOf<Attachment>()
+
+    fun addAttachment(attachment: Attachment) {
+        attachments.add(attachment)
+    }
+}
+
+// Интерфейс AttachmentInf
+interface AttachmentInf {
+    val type: String
+}
+
+data class AudioInf(val duration: Int, val bitrate: Int)
+data class VideoInf(val duration: Int, val resolution: String)
+data class PhotoInf(val width: Int, val height: Int)
+
+class AudioAttachmentInf(val audioInf: AudioInf) : AttachmentInf {
+    override val type: String = "аудио"
+}
+
+class VideoAttachmentInf(val videoInf: VideoInf) : AttachmentInf {
+    override val type: String = "видео"
+}
+
+class PhotoAttachmentInf(val photoInf: PhotoInf) : AttachmentInf {
+    override val type: String = "фото"
+}
+
+class PostInf(val idInf: Int, val contentInf: String) {
+    private val attachmentsInf = mutableListOf<AttachmentInf>()
+
+    fun addAttachmentInf(attachmentInf: AttachmentInf) {
+        attachmentsInf.add(attachmentInf)
+    }
+
+    fun showAttachmentsInf() {
+        for (attachmentInf in attachmentsInf) {
+            println("AttachmentInf Type: ${attachmentInf.type}")
+        }
+    }
+}
+
+
+
+
