@@ -5,6 +5,8 @@ fun main() {
 
     val result1 = WallService.add(post)
     val result2 = WallService.update(updatedPost)
+    val result3 = WallService.createComment(
+        10, Comments(count = 100, canPost = true, id = 34, postId = 23, "Новейший"))
     println(WallService.getAllPosts())
 
     val postRep = PostRep(id = 1, content = "Репост абстрактный класс")
@@ -47,7 +49,10 @@ data class Post(
 
 data class Comments(
     val count: Int = 0,      // Количество комментариев
-    val canPost: Boolean = false  // Возможность комментирования
+    val canPost: Boolean = false,  // Возможность комментирования
+    val id: Int,
+    val postId: Int,
+    val comment: String
 )
 
 data class Likes(
@@ -56,9 +61,24 @@ data class Likes(
     val canLike: Boolean = false    // Возможность поставить лайк
 )
 
+class PostNotFoundException(message: String) : Exception(message)
+
+
 object WallService {
     private var posts = mutableListOf<Post>() // Массив для хранения постов
     private var lastId = 0
+    private var comments = mutableListOf<Comments>()
+    private var lastCommentId = 0
+
+    fun createComment(postId: Int, comment: Comments): Comments {
+        if (posts.none { it.id == postId }) {
+            throw PostNotFoundException("Пост с номером $postId не найден")
+        }
+        lastCommentId++
+        val newComment = comment.copy(id = lastCommentId, postId = postId)
+        comments += newComment
+        return newComment
+    }
 
     fun add(post: Post): Post {
         val newPost = post.copy(id = ++lastId)

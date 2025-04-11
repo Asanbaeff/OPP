@@ -2,7 +2,6 @@ import org.junit.Test
 import org.junit.Before
 import org.junit.Assert.*
 
-
 class WallServiceTest {
 
     @Test
@@ -34,4 +33,25 @@ class WallServiceTest {
         val result = WallService.update(nonExistingPost)
         assertEquals(false, result)
     }
+
+
+    @Test
+    fun shouldAddCommentToExistingPost() {
+        val post = Post(id = 1, text = "Hello")
+        WallService.add(post)
+
+        val comment = Comments(id = 0, postId = 1, comment = "Nice post!")
+        val addedComment = WallService.createComment(postId = 1, comment = comment)
+
+        assertEquals(1, addedComment.id) // Проверяем ID комментария
+        assertEquals(1, addedComment.postId) // Проверяем ID поста
+        assertEquals("Nice post!", addedComment.comment) // Проверяем содержимое комментария
+    }
+
+    @Test(expected = PostNotFoundException::class)
+    fun shouldThrowWhenPostNotFound() {
+        val comment = Comments(id = 0, postId = 99, comment = "This post does not exist")
+        WallService.createComment(postId = 99, comment = comment)
+    }
+
 }
